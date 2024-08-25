@@ -69,6 +69,19 @@ local function copyTime()
     end
 end
 
+local function copyPreciseTime()
+    local time_pos = mp.get_property_number("time-pos")
+    local minutes, remainder = divmod(time_pos, 60)
+    local hours, minutes = divmod(minutes, 60)
+    local seconds = math.floor(remainder)
+    local milliseconds = math.floor((remainder - seconds) * 1000)
+    local time = string.format("%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds)
+    if set_clipboard(time) then
+        mp.osd_message(string.format("Copied to Clipboard: %s", time))
+    else
+        mp.osd_message("Failed to copy time to clipboard")
+    end
+end
 
 platform = platform_type()
 if platform == UNIX then
@@ -76,3 +89,4 @@ if platform == UNIX then
 end
 
 mp.add_key_binding("Ctrl+t", "copyTime", copyTime)
+mp.add_key_binding("Ctrl+Shift+t", "copyPreciseTime", copyPreciseTime)
